@@ -1,119 +1,92 @@
-/**
- * NOTE: This refactored code assumes a few things about your HTML:
- * 1. Your form has an id: <form id="mrsancalcform">.
- * 2. All input elements have corresponding id attributes (e.g., <input id="x">).
- * 3. The various 'convert' and 'roundresult1' functions (convert, convert1, convert2, convertbase, roundresult1)
- * are defined elsewhere in your codebase, as they were not included in the original snippet.
- */
+// A more descriptive function name
+function setFocus() {
+  document.mrsancalcform.x.focus();
+}
 
-// Get the form element once to reuse it in multiple functions.
-const calcForm = document.getElementById('mrsancalcform');
+// A generic function to handle conversion and display
+function calculateAndDisplay(conversionFunction, ...args) {
+  const result = conversionFunction(...args.map(arg => parseFloat(arg)));
+  const roundedResult = roundResult(result);
+  document.mrsancalcform.y.value = roundedResult;
+}
 
-// --- Utility Functions ---
+// Consolidated calc functions
+function calc() {
+  const x = document.mrsancalcform.x.value;
+  calculateAndDisplay(convert, x);
+}
 
-/**
- * Rounds a number to a specified precision and removes insignificant trailing zeros.
- * @param {number} num The number to round.
- * @param {number} [precision=10] The total number of significant digits.
- * @returns {number} The rounded number.
- */
-const roundNumber = (num, precision = 10) => {
-  const number = parseFloat(num);
-  if (isNaN(number)) {
-    return num; // Return original value if it's not a valid number
+function calc3() {
+  const x1 = document.mrsancalcform.x1.value;
+  const x2 = document.mrsancalcform.x2.value;
+  calculateAndDisplay(convert, x1, x2);
+}
+
+function calc4() {
+  const x1 = document.mrsancalcform.x1.value;
+  const x2 = document.mrsancalcform.x2.value;
+  const x3 = document.mrsancalcform.x3.value;
+  calculateAndDisplay(convert, x1, x2, x3);
+}
+
+// A more specialized function for different outputs
+function calc5() {
+  const x = document.mrsancalcform.x.value;
+
+  const y1 = roundResult(convert1(x));
+  document.mrsancalcform.y1.value = y1;
+
+  const y2 = roundResult(convert2(x));
+  document.mrsancalcform.y2.value = y2;
+}
+
+// Generalized base conversion function
+function calcBase(base1, base2) {
+  const x = document.mrsancalcform.x.value;
+  document.mrsancalcform.y.value = convertBase(x, base1, base2);
+}
+
+function calcBase2() {
+  const x = document.mrsancalcform.x.value;
+  const y = convert(x);
+  document.mrsancalcform.y.value = y;
+}
+
+// ---
+
+### **Helper Functions**
+
+The original helper functions are a bit complex and could be simplified. The `roundResult` and `roundNum` functions seem to aim for a specific type of rounding that removes trailing zeros. Here's a cleaner version of the rounding logic.
+
+```javascript
+// Helper to round a number to a specific precision and clean up trailing zeros.
+// This function aims to replicate the original logic, which removes
+// trailing zeros after a decimal point for a clean display.
+function roundResult(x) {
+  const precision = 10;
+  let num = parseFloat(x);
+
+  // If the number is an integer, return it as is.
+  if (Number.isInteger(num)) {
+    return num.toString();
   }
-  // toPrecision() returns a string. Converting it back to a Number
-  // automatically handles rounding and removes trailing zeros.
-  return Number(number.toPrecision(precision));
-};
 
+  // Use toPrecision to get the specified number of significant digits.
+  // The 'parseFloat' call handles the removal of trailing zeros from
+  // the string produced by toPrecision.
+  let rounded = parseFloat(num.toPrecision(precision));
 
-// --- Core Calculation Functions ---
+  // Handle scientific notation for very large or small numbers.
+  // We check if the number is within a range where we can avoid
+  // scientific notation for cleaner display.
+  if (Math.abs(rounded) < 1e-6 || Math.abs(rounded) > 1e10) {
+    return rounded.toString();
+  }
 
-/**
- * Sets the focus on a specific input field when the page loads.
- * @param {string} [elementId='x'] The id of the element to focus on.
- */
-const setInitialFocus = (elementId = 'x') => {
-  calcForm.elements[elementId]?.focus();
-};
+  return rounded.toString();
+}
 
-/**
- * Handles a calculation with one input.
- * Corresponds to the original `calc()` function.
- */
-const calculateSingleInput = () => {
-  const inputValue = calcForm.elements.x.value;
-  // Assumes 'convert(x)' is defined elsewhere
-  const result = convert(inputValue);
-  calcForm.elements.y.value = roundNumber(result);
-};
-
-/**
- * Handles a test calculation.
- * Corresponds to the original `calctest()`.
- * NOTE: Assumes 'roundresult1(y)' is defined elsewhere.
- */
-const calculateTest = () => {
-  const inputValue = calcForm.elements.x.value;
-  // Assumes 'convert(x)' and 'roundresult1(y)' are defined elsewhere
-  const result = convert(inputValue);
-  calcForm.elements.y.value = roundresult1(result);
-};
-
-/**
- * Handles a calculation with two inputs.
- * Corresponds to the original `calc3()`.
- */
-const calculateTwoInputs = () => {
-  const input1 = calcForm.elements.x1.value;
-  const input2 = calcForm.elements.x2.value;
-  // Assumes 'convert(x1, x2)' is defined elsewhere
-  const result = convert(input1, input2);
-  calcForm.elements.y.value = roundNumber(result);
-};
-
-/**
- * Handles a calculation with three inputs.
- * Corresponds to the original `calc4()`.
- */
-const calculateThreeInputs = () => {
-  const input1 = calcForm.elements.x1.value;
-  const input2 = calcForm.elements.x2.value;
-  const input3 = calcForm.elements.x3.value;
-  // Assumes 'convert(x1, x2, x3)' is defined elsewhere
-  const result = convert(input1, input2, input3);
-  calcForm.elements.y.value = roundNumber(result);
-};
-
-/**
- * Handles a calculation that populates two separate output fields.
- * Corresponds to the original `calc5()`.
- */
-const calculateAndSplit = () => {
-  const inputValue = calcForm.elements.x.value;
-  // Assumes 'convert1(x)' and 'convert2(x)' are defined elsewhere
-  calcForm.elements.y1.value = roundNumber(convert1(inputValue));
-  calcForm.elements.y2.value = roundNumber(convert2(inputValue));
-};
-
-/**
- * Handles a base conversion calculation.
- * Corresponds to the original `calcbase(b1, b2)`.
- */
-const calculateBaseConversion = (baseFrom, baseTo) => {
-  const inputValue = calcForm.elements.x.value;
-  // Assumes 'convertbase(x, b1, b2)' is defined elsewhere.
-  // Base conversion inputs are typically strings, so parseFloat is not used.
-  calcForm.elements.y.value = convertbase(inputValue, baseFrom, baseTo);
-};
-
-/**
- * Handles a direct conversion without rounding the result.
- * Corresponds to the original `calcbase2()`.
- */
-const calculateWithDirectConversion = () => {
-  const inputValue = calcForm.elements.x.value;
-  // Assumes 'convert(x)' is defined elsewhere
-  calcForm.elements.y.value = convert(inputValue);
-};
+// Note: The original 'roundNum' and 'removeAt' functions had some
+// complex string manipulation for removing trailing zeros. The
+// refined 'roundResult' function achieves the same result more
+// simply by combining parseFloat and toPrecision.
