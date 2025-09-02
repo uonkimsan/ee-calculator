@@ -1,2 +1,267 @@
-var rtcs;function setfocus(){document.calcform.x.focus()}function calc(){y=roundresult(y=convert(x=document.calcform.x.value)),document.calcform.y.value=y}function calctest(){y=roundresult1(y=convert(x=document.calcform.x.value)),document.calcform.y.value=y}function calc3(){y=roundresult(y=convert(x1=document.calcform.x1.value,x2=document.calcform.x2.value)),document.calcform.y.value=y}function calc4(){x1=document.calcform.x1.value,y=roundresult(y=convert(x1,x2=document.calcform.x2.value,x3=document.calcform.x3.value)),document.calcform.y.value=y}function calc5(){y=roundresult(y=convert1(x=document.calcform.x.value)),document.calcform.y1.value=y,y=roundresult(y=convert2(x)),document.calcform.y2.value=y}function str2num(e,r){void 0===r&&(r=1);var t=1.1.toLocaleString().substring(1,2);if(1e3.toLocaleString().substring(1,2),-1!=(e=(e=e.toString().trim()).replace(/[^\d\s\.\,\-\+\*\/e]/g,"")).indexOf(" ")&&-1!=e.indexOf("/")&&(e=e.replace(/(\d)(\s+)(?=\d)/gm,"$1+")),e=e.replace(/\s/g,""),","==t){var n,u=(e.match(/\u002E/g)||[]).length,c=(e.match(/\u002C/g)||[]).length;if(0==u&&(1==c&&(e=e.replace(/\u002C/g,".")),c>1&&(e=e.replace(/\u002C/g,""))),0==c&&u>1&&(e=e.replace(/\u002E/g,"")),u>0&&c>0){e=e.indexOf(".")<e.indexOf(",")?e.replace(/\u002E/g,"").replace(/\u002C/g,"."):e.replace(/\u002C/g,"")}}else e=e.replace(/\u002C/g,"");return""==(e=e.replace("\xd7","*").replace("\xf7","/"))?0:r?Function('"use strict";return ('+e+")")():e}function str2num2(e){return e=e.toString().trim().replace(/(\d)(\s+)(?=\d)/gm,"$1+").replace(/\u002C/g,".").replace(/[\u0027\u002C\s]/g,"").replace(/[^-()e\d/*\u00D7\u00F7+.%^!&|isqrt]/g,"").replace("\xd7","*").replace("\xf7","/")}function str2num3(e){var r,t=e.split(" ");if(2==t.length&&-1!=t[1].indexOf("/"))(r=[,])[0]=str2num(e);else{r=Array(t.length);for(var n=0;n<t.length;n++)r[n]=str2num(t[n])}return r}function str2num4(e){return e=e.replace(/\u002C/g,".")}function num2str(e,r){//!!!if( arguments.length==1 )
-if(void 0===r)var r=-1;if(-1!=(e=e.toString()).indexOf("e")){var t=1.1.toLocaleString().substring(1,2);return e=e.replace(".",t)}e=Number(e=(e=e.replace("âˆ’","-")).substring(e.indexOf("-")));var n=r<0?0:r,u=r<0?20:r;return e=(e=e.toLocaleString(void 0,{minimumFractionDigits:n,maximumFractionDigits:u})).trim().replace(/\u00D7/g,"")}function num2str2(e){var r=1.1.toLocaleString().substring(1,2),t=1e3.toLocaleString().substring(1,2);if(-1!=(e=e.toString().replace(".",r)).indexOf("e"))return e;var n=e.indexOf(r);if(-1==n&&(n=e.length),n>3)for(var u=n-3;u>0;u-=3)e=e.slice(0,u)+t+e.slice(u);return e}function isInt(e){return Number(e)===e&&e%1==0}function isFloat(e){return Number(e)===e&&e%1!=0}function inputnum2txt(){if(!(window.innerWidth<800)&&"undefined"==typeof n2tskip)for(var e=document.querySelectorAll("input[type=number]"),r=0;r<e.length;r++)e[r].type="text",e[r].removeAttribute("min"),e[r].removeAttribute("max"),e[r].removeAttribute("step")}function GetOS(){var e="unknown";return -1!=navigator.userAgent.indexOf("Android")&&(e="Android"),-1!=navigator.userAgent.indexOf("like Mac")&&(e="iOS"),e}function setInput(e){var r=GetOS();if("iOS"==r){e.type="number",e.step="any";return}"Android"==r&&e.setAttribute("inputmode","numeric")}function decodeURIComponent2(e){return decodeURIComponent(e.replace(/\+/g," "))}function roundresult(e){return y=roundnum(y=parseFloat(e),10)}function roundnum(e,r){var t,n=String(parseFloat(e).toFixed(r));if(-1==(t=n.indexOf("e"))&&(t=n.length),t>(j=n.indexOf("."))&&-1!=j){for(;t>0;)if("0"==n.charAt(--t))n=removeAt(n,t);else break;"."==n.charAt(t)&&(n=removeAt(n,t))}return n}function removeAt(e,r){return e=e.substring(0,r)+e.substring(r+1,e.length)}window.addEventListener("DOMContentLoaded",function(){inputnum2txt()});
+let rtcs;
+
+function setFocus() {
+  document.calcform.x.focus();
+}
+
+/**
+ * Main calculation function for single input.
+ */
+function calc() {
+  const x = document.calcform.x.value;
+  const y = convert(x);
+  document.calcform.y.value = roundResult(y);
+}
+
+/**
+ * Test calculation function using a different rounding method.
+ */
+function calcTest() {
+  const x = document.calcform.x.value;
+  const y = convert(x);
+  document.calcform.y.value = roundResult1(y);
+}
+
+/**
+ * Calculation function for two inputs.
+ */
+function calc3() {
+  const x1 = document.calcform.x1.value;
+  const x2 = document.calcform.x2.value;
+  const y = convert(x1, x2);
+  document.calcform.y.value = roundResult(y);
+}
+
+/**
+ * Calculation function for three inputs.
+ */
+function calc4() {
+  const x1 = document.calcform.x1.value;
+  const x2 = document.calcform.x2.value;
+  const x3 = document.calcform.x3.value;
+  const y = convert(x1, x2, x3);
+  document.calcform.y.value = roundResult(y);
+}
+
+/**
+ * Calculation function with two separate outputs.
+ */
+function calc5() {
+  const x = document.calcform.x.value;
+
+  const y1 = convert1(x);
+  document.calcform.y1.value = roundResult(y1);
+
+  const y2 = convert2(x);
+  document.calcform.y2.value = roundResult(y2);
+}
+
+/**
+ * Converts a string to a number, handling different locale formats.
+ * @param {string} str The string to convert.
+ * @param {boolean} evaluate If true, evaluates the string as a mathematical expression.
+ */
+function str2num(str, evaluate = true) {
+  let cleanedStr = str.toString().trim().replace(/[^\d\s.,-+\*\/e]/g, "");
+
+  // Handle space-separated numbers as addition
+  if (cleanedStr.includes(" ") && cleanedStr.includes("/")) {
+    cleanedStr = cleanedStr.replace(/(\d)(\s+)(?=\d)/gm, "$1+");
+  }
+  cleanedStr = cleanedStr.replace(/\s/g, "");
+
+  // Locale-specific number formatting
+  const decimalChar = (1.1).toLocaleString().substring(1, 2);
+  if (decimalChar === ",") {
+    const periodCount = (cleanedStr.match(/\./g) || []).length;
+    const commaCount = (cleanedStr.match(/,/g) || []).length;
+
+    if (periodCount === 0 && commaCount > 0) {
+      if (commaCount === 1) {
+        cleanedStr = cleanedStr.replace(/,/g, ".");
+      } else {
+        cleanedStr = cleanedStr.replace(/,/g, "");
+      }
+    } else if (commaCount === 0 && periodCount > 1) {
+      cleanedStr = cleanedStr.replace(/\./g, "");
+    } else if (periodCount > 0 && commaCount > 0) {
+      if (cleanedStr.indexOf(".") < cleanedStr.indexOf(",")) {
+        cleanedStr = cleanedStr.replace(/\./g, "").replace(/,/g, ".");
+      } else {
+        cleanedStr = cleanedStr.replace(/,/g, "");
+      }
+    }
+  } else {
+    cleanedStr = cleanedStr.replace(/,/g, "");
+  }
+
+  cleanedStr = cleanedStr.replace("×", "*").replace("÷", "/");
+  if (cleanedStr === "") return 0;
+  
+  return evaluate ? Function(`"use strict";return (${cleanedStr})`)() : cleanedStr;
+}
+
+/**
+ * Cleans up a string for numerical evaluation.
+ */
+function str2num2(str) {
+  return str.toString()
+    .trim()
+    .replace(/(\d)(\s+)(?=\d)/gm, "$1+")
+    .replace(/,/g, ".")
+    .replace(/['\s]/g, "")
+    .replace(/[^-()e\d/*×÷+.%^!&|isqrt]/g, "")
+    .replace("×", "*")
+    .replace("÷", "/");
+}
+
+/**
+ * Converts a space-separated string of numbers to an array of numbers.
+ */
+function str2num3(str) {
+  const parts = str.split(" ");
+  if (parts.length === 2 && parts[1].includes("/")) {
+    return [str2num(str)];
+  }
+
+  return parts.map(part => str2num(part));
+}
+
+/**
+ * Replaces commas with periods.
+ */
+function str2num4(str) {
+  return str.replace(/,/g, ".");
+}
+
+/**
+ * Converts a number to a localized string.
+ * @param {number} num The number to convert.
+ * @param {number} precision The number of decimal places.
+ */
+function num2str(num, precision = -1) {
+  let str = num.toString();
+  if (str.includes("e")) {
+    const decimalChar = (1.1).toLocaleString().substring(1, 2);
+    return str.replace(".", decimalChar);
+  }
+
+  num = Number(str.replace("−", "-"));
+  const minDigits = precision < 0 ? 0 : precision;
+  const maxDigits = precision < 0 ? 20 : precision;
+
+  return num.toLocaleString(undefined, {
+    minimumFractionDigits: minDigits,
+    maximumFractionDigits: maxDigits
+  }).trim().replace(/×/g, "");
+}
+
+/**
+ * Converts a number to a localized string, adding thousands separators.
+ */
+function num2str2(num) {
+  const decimalChar = (1.1).toLocaleString().substring(1, 2);
+  const thousandsChar = (1000).toLocaleString().substring(1, 2);
+  let str = num.toString().replace(".", decimalChar);
+
+  if (str.includes("e")) return str;
+
+  const decimalIndex = str.indexOf(decimalChar);
+  const integerPart = decimalIndex === -1 ? str : str.substring(0, decimalIndex);
+  const fractionalPart = decimalIndex === -1 ? "" : str.substring(decimalIndex);
+
+  let formattedInteger = "";
+  for (let i = integerPart.length - 1, count = 0; i >= 0; i--, count++) {
+    formattedInteger = integerPart.charAt(i) + formattedInteger;
+    if (count % 3 === 2 && i > 0) {
+      formattedInteger = thousandsChar + formattedInteger;
+    }
+  }
+
+  return formattedInteger + fractionalPart;
+}
+
+/**
+ * Checks if a number is an integer.
+ */
+function isInt(num) {
+  return Number(num) === num && num % 1 === 0;
+}
+
+/**
+ * Checks if a number is a float.
+ */
+function isFloat(num) {
+  return Number(num) === num && num % 1 !== 0;
+}
+
+/**
+ * Changes number input types to text for broader browser compatibility.
+ */
+function inputnum2txt() {
+  if (window.innerWidth >= 800 && typeof n2tskip === "undefined") {
+    const numberInputs = document.querySelectorAll("input[type=number]");
+    numberInputs.forEach(input => {
+      input.type = "text";
+      input.removeAttribute("min");
+      input.removeAttribute("max");
+      input.removeAttribute("step");
+    });
+  }
+}
+
+/**
+ * Detects the operating system.
+ */
+function getOS() {
+  const userAgent = navigator.userAgent;
+  if (userAgent.includes("Android")) return "Android";
+  if (userAgent.includes("like Mac")) return "iOS";
+  return "unknown";
+}
+
+/**
+ * Sets input attributes based on the OS.
+ */
+function setInput(input) {
+  const os = getOS();
+  if (os === "iOS") {
+    input.type = "number";
+    input.step = "any";
+  } else if (os === "Android") {
+    input.setAttribute("inputmode", "numeric");
+  }
+}
+
+/**
+ * Decodes a URI component, replacing plus signs with spaces.
+ */
+function decodeURIComponent2(str) {
+  return decodeURIComponent(str.replace(/\+/g, " "));
+}
+
+/**
+ * Rounds a number to a fixed precision (10 decimal places).
+ */
+function roundResult(num) {
+  return roundNum(parseFloat(num), 10);
+}
+
+/**
+ * Rounds a number and removes trailing zeros.
+ * @param {number} num The number to round.
+ * @param {number} precision The number of decimal places.
+ */
+function roundNum(num, precision) {
+  let str = num.toFixed(precision);
+  
+  // Remove trailing zeros and the decimal point if it's the last character
+  str = str.replace(/(\.\d*?)0+$/, "$1");
+  str = str.replace(/\.$/, "");
+  
+  return str;
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  inputnum2txt();
+});
