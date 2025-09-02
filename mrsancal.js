@@ -1,134 +1,210 @@
-var rtcs;
+// A namespace object to prevent polluting the global scope
+const Calculator = {
+  // A helper function to get form elements
+  getFormElements: (formName, ...elementNames) => {
+    const form = document.forms[formName];
+    if (!form) {
+      console.error(`Form not found: ${formName}`);
+      return {};
+    }
+    const elements = {};
+    for (const name of elementNames) {
+      elements[name] = form[name];
+    }
+    return elements;
+  },
 
-function setfocus() {
-    document.calcform.x.focus()
-}
+  setFocus: () => {
+    const { x } = Calculator.getFormElements("calcform", "x");
+    if (x) {
+      x.focus();
+    }
+  },
 
-function calc() {
-    y = roundresult(y = convert(x = document.calcform.x.value)), document.calcform.y.value = y
-}
+  // The main calculation function (requires 'convert' logic)
+  calc: () => {
+    const { x, y } = Calculator.getFormElements("calcform", "x", "y");
+    if (!x || !y) return;
+    try {
+      const result = Calculator.roundResult(Calculator.convert(x.value));
+      y.value = result;
+    } catch (error) {
+      console.error("Calculation failed:", error);
+      y.value = "Error";
+    }
+  },
 
-function calctest() {
-    y = roundresult1(y = convert(x = document.calcform.x.value)), document.calcform.y.value = y
-}
+  // Re-factored calculation functions
+  calcTest: () => {
+    const { x, y } = Calculator.getFormElements("calcform", "x", "y");
+    if (!x || !y) return;
+    try {
+      const result = Calculator.roundResult1(Calculator.convert(x.value));
+      y.value = result;
+    } catch (error) {
+      console.error("Calculation test failed:", error);
+      y.value = "Error";
+    }
+  },
 
-function calc3() {
-    y = roundresult(y = convert(x1 = document.calcform.x1.value, x2 = document.calcform.x2.value)), document.calcform.y.value = y
-}
+  calc3: () => {
+    const { x1, x2, y } = Calculator.getFormElements("calcform", "x1", "x2", "y");
+    if (!x1 || !x2 || !y) return;
+    try {
+      const result = Calculator.roundResult(
+        Calculator.convert(x1.value, x2.value)
+      );
+      y.value = result;
+    } catch (error) {
+      console.error("Calculation 3 failed:", error);
+      y.value = "Error";
+    }
+  },
 
-function calc4() {
-    x1 = document.calcform.x1.value, y = roundresult(y = convert(x1, x2 = document.calcform.x2.value, x3 = document.calcform.x3.value)), document.calcform.y.value = y
-}
+  calc4: () => {
+    const { x1, x2, x3, y } = Calculator.getFormElements("calcform", "x1", "x2", "x3", "y");
+    if (!x1 || !x2 || !x3 || !y) return;
+    try {
+      const result = Calculator.roundResult(
+        Calculator.convert(x1.value, x2.value, x3.value)
+      );
+      y.value = result;
+    } catch (error) {
+      console.error("Calculation 4 failed:", error);
+      y.value = "Error";
+    }
+  },
 
-function calc5() {
-    y = roundresult(y = convert1(x = document.calcform.x.value)), document.calcform.y1.value = y, y = roundresult(y = convert2(x)), document.calcform.y2.value = y
-}
+  calc5: () => {
+    const { x, y1, y2 } = Calculator.getFormElements("calcform", "x", "y1", "y2");
+    if (!x || !y1 || !y2) return;
+    try {
+      y1.value = Calculator.roundResult(Calculator.convert1(x.value));
+      y2.value = Calculator.roundResult(Calculator.convert2(x.value));
+    } catch (error) {
+      console.error("Calculation 5 failed:", error);
+      y1.value = "Error";
+      y2.value = "Error";
+    }
+  },
 
-function str2num(e, r) {
-    void 0 === r && (r = 1);
-    var t = 1.1.toLocaleString().substring(1, 2);
-    if (1e3.toLocaleString().substring(1, 2), -1 != (e = (e = e.toString().trim()).replace(/[^\d\s\.\,\-\+\*\/e]/g, "")).indexOf(" ") && -1 != e.indexOf("/") && (e = e.replace(/(\d)(\s+)(?=\d)/gm, "$1+")), e = e.replace(/\s/g, ""), "," == t) {
-        var n, u = (e.match(/\u002E/g) || []).length,
-            c = (e.match(/\u002C/g) || []).length;
-        if (0 == u && (1 == c && (e = e.replace(/\u002C/g, ".")), c > 1 && (e = e.replace(/\u002C/g, ""))), 0 == c && u > 1 && (e = e.replace(/\u002E/g, "")), u > 0 && c > 0) {
-            e = e.indexOf(".") < e.indexOf(",") ? e.replace(/\u002E/g, "").replace(/\u002C/g, ".") : e.replace(/\u002C/g, "")
+  // Re-factored number-to-string conversion
+  numToStr: (num, precision = -1) => {
+    if (typeof num !== 'number') {
+      return '';
+    }
+    const fixedPrecision = precision < 0 ? 20 : precision;
+    return num.toLocaleString(undefined, {
+      minimumFractionDigits: precision < 0 ? 0 : precision,
+      maximumFractionDigits: fixedPrecision,
+      useGrouping: true
+    }).replace('âˆ’', '-').replace(/\u00D7/g, '');
+  },
+
+  // Helper functions for rounding
+  roundResult: (val) => Calculator.roundNum(parseFloat(val), 10),
+
+  roundNum: (num, precision) => {
+    const fixedNum = parseFloat(num).toFixed(precision);
+    let str = String(fixedNum);
+    
+    if (str.includes("e")) {
+        return str;
+    }
+
+    // Remove trailing zeros and decimal point
+    str = str.replace(/\.?0+$/, "");
+    return str;
+  },
+
+  // General utility functions
+  isInt: (num) => Number.isInteger(num),
+  isFloat: (num) => Number(num) === num && num % 1 !== 0,
+  getOS: () => {
+    const userAgent = navigator.userAgent;
+    if (userAgent.includes("Android")) return "Android";
+    if (userAgent.includes("like Mac")) return "iOS";
+    return "unknown";
+  },
+
+  // UX and UI functions
+  inputNumToText: () => {
+    if (window.innerWidth >= 800) {
+      const numberInputs = document.querySelectorAll("input[type=number]");
+      numberInputs.forEach(input => {
+        input.type = "text";
+        input.removeAttribute("min");
+        input.removeAttribute("max");
+        input.removeAttribute("step");
+      });
+    }
+  },
+  
+  // Re-written str2num for clarity and security.
+  // This version avoids Function() and uses a simpler, safer approach.
+  strToNum: (input, evaluate = true) => {
+    if (!input) return 0;
+    
+    // Sanitize input
+    let str = input.toString().trim().replace(/[^\d\s.,+\-*/]/g, '');
+
+    // Handle locale-specific separators
+    const localeDecimal = (1.1).toLocaleString().substring(1, 2);
+    const localeThousands = (1000).toLocaleString().substring(1, 2);
+
+    if (localeDecimal === ',') {
+      const dotCount = (str.match(/\./g) || []).length;
+      const commaCount = (str.match(/,/g) || []).length;
+      
+      if (dotCount === 0 && commaCount > 0) {
+        str = str.replace(/,/g, '.');
+      } else if (dotCount > 0 && commaCount > 0) {
+        str = str.replace(new RegExp(`\\${localeThousands}`, 'g'), '').replace(localeDecimal, '.');
+      }
+    } else {
+      str = str.replace(new RegExp(`\\${localeThousands}`, 'g'), '');
+    }
+
+    str = str.replace(/\s/g, '');
+
+    if (!evaluate) {
+      return str;
+    }
+    
+    // Safer evaluation using a function with a known math scope
+    const safeEval = (expr) => {
+      // Basic support for arithmetic operators
+      const ops = {
+        '+': (a, b) => a + b,
+        '-': (a, b) => a - b,
+        '*': (a, b) => a * b,
+        '/': (a, b) => a / b,
+      };
+
+      const tokens = str.match(/(\d+\.?\d*|[\+\-*/])/g);
+      if (!tokens || tokens.length === 0) return 0;
+
+      let result = parseFloat(tokens[0]);
+      for (let i = 1; i < tokens.length; i += 2) {
+        const operator = tokens[i];
+        const nextNum = parseFloat(tokens[i + 1]);
+        if (ops[operator]) {
+          result = ops[operator](result, nextNum);
         }
-    } else e = e.replace(/\u002C/g, "");
-    return "" == (e = e.replace("\xd7", "*").replace("\xf7", "/")) ? 0 : r ? Function('"use strict";return (' + e + ")")() : e
-}
-
-function str2num2(e) {
-    return e = e.toString().trim().replace(/(\d)(\s+)(?=\d)/gm, "$1+").replace(/\u002C/g, ".").replace(/[\u0027\u002C\s]/g, "").replace(/[^-()e\d/*\u00D7\u00F7+.%^!&|isqrt]/g, "").replace("\xd7", "*").replace("\xf7", "/")
-}
-
-function str2num3(e) {
-    var r, t = e.split(" ");
-    if (2 == t.length && -1 != t[1].indexOf("/"))(r = [, ])[0] = str2num(e);
-    else {
-        r = Array(t.length);
-        for (var n = 0; n < t.length; n++) r[n] = str2num(t[n])
+      }
+      return result;
+    };
+    
+    try {
+        return safeEval(str);
+    } catch (e) {
+        console.error("Invalid expression:", str);
+        return NaN;
     }
-    return r
-}
+  }
+};
 
-function str2num4(e) {
-    return e = e.replace(/\u002C/g, ".")
-}
-
-function num2str(e, r) { //!!!if( arguments.length==1 )
-    if (void 0 === r) var r = -1;
-    if (-1 != (e = e.toString()).indexOf("e")) {
-        var t = 1.1.toLocaleString().substring(1, 2);
-        return e = e.replace(".", t)
-    }
-    e = Number(e = (e = e.replace("âˆ’", "-")).substring(e.indexOf("-")));
-    var n = r < 0 ? 0 : r,
-        u = r < 0 ? 20 : r;
-    return e = (e = e.toLocaleString(void 0, {
-        minimumFractionDigits: n,
-        maximumFractionDigits: u
-    })).trim().replace(/\u00D7/g, "")
-}
-
-function num2str2(e) {
-    var r = 1.1.toLocaleString().substring(1, 2),
-        t = 1e3.toLocaleString().substring(1, 2);
-    if (-1 != (e = e.toString().replace(".", r)).indexOf("e")) return e;
-    var n = e.indexOf(r);
-    if (-1 == n && (n = e.length), n > 3)
-        for (var u = n - 3; u > 0; u -= 3) e = e.slice(0, u) + t + e.slice(u);
-    return e
-}
-
-function isInt(e) {
-    return Number(e) === e && e % 1 == 0
-}
-
-function isFloat(e) {
-    return Number(e) === e && e % 1 != 0
-}
-
-function inputnum2txt() {
-    if (!(window.innerWidth < 800) && "undefined" == typeof n2tskip)
-        for (var e = document.querySelectorAll("input[type=number]"), r = 0; r < e.length; r++) e[r].type = "text", e[r].removeAttribute("min"), e[r].removeAttribute("max"), e[r].removeAttribute("step")
-}
-
-function GetOS() {
-    var e = "unknown";
-    return -1 != navigator.userAgent.indexOf("Android") && (e = "Android"), -1 != navigator.userAgent.indexOf("like Mac") && (e = "iOS"), e
-}
-
-function setInput(e) {
-    var r = GetOS();
-    if ("iOS" == r) {
-        e.type = "number", e.step = "any";
-        return
-    }
-    "Android" == r && e.setAttribute("inputmode", "numeric")
-}
-
-function decodeURIComponent2(e) {
-    return decodeURIComponent(e.replace(/\+/g, " "))
-}
-
-function roundresult(e) {
-    return y = roundnum(y = parseFloat(e), 10)
-}
-
-function roundnum(e, r) {
-    var t, n = String(parseFloat(e).toFixed(r));
-    if (-1 == (t = n.indexOf("e")) && (t = n.length), t > (j = n.indexOf(".")) && -1 != j) {
-        for (; t > 0;)
-            if ("0" == n.charAt(--t)) n = removeAt(n, t);
-            else break;
-        "." == n.charAt(t) && (n = removeAt(n, t))
-    }
-    return n
-}
-
-function removeAt(e, r) {
-    return e = e.substring(0, r) + e.substring(r + 1, e.length)
-}
-window.addEventListener("DOMContentLoaded", function() {
-    inputnum2txt()
+// Event listener for a cleaner, modern approach
+document.addEventListener("DOMContentLoaded", () => {
+  Calculator.inputNumToText();
 });
