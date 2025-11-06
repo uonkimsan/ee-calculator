@@ -1,30 +1,30 @@
 function setfocus() {
- document.mrsancalcform.x.focus();
+ document.calcform.x.focus();
 }
 function calc() {
- x = document.mrsancalcform.x.value;
+ x = document.calcform.x.value;
  y = convert(x);
   y = roundresult(y);
-  document.mrsancalcform.y.value = y;
+  document.calcform.y.value = y;
 }
 function calctest() {
- x = document.mrsancalcform.x.value;
+ x = document.calcform.x.value;
  y = convert(x);
   //y = roundresult(y);
   y = roundresult1(y);
-  document.mrsancalcform.y.value = y;
+  document.calcform.y.value = y;
 }
 function calc3() {
- x1 = document.mrsancalcform.x1.value;
- x2 = document.mrsancalcform.x2.value;
+ x1 = document.calcform.x1.value;
+ x2 = document.calcform.x2.value;
  y  = convert(x1,x2);
   y  = roundresult(y);
-  document.mrsancalcform.y.value = y;
+  document.calcform.y.value = y;
 }
 function calc4() {
- x1 = document.mrsancalcform.x1.value;
- x2 = document.mrsancalcform.x2.value;
- x3 = document.mrsancalcform.x3.value;
+ x1 = document.calcform.x1.value;
+ x2 = document.calcform.x2.value;
+ x3 = document.calcform.x3.value;
  y  = convert(x1,x2,x3);
   y  = roundresult(y);
   //yy = y.toString();
@@ -32,25 +32,25 @@ function calc4() {
   // y = parseFloat(y);
   // y = y.toPrecision(10);
   //}
-  document.mrsancalcform.y.value = y;
+  document.calcform.y.value = y;
 }
 function calc5() {
- x = document.mrsancalcform.x.value;
+ x = document.calcform.x.value;
  y  = convert1(x);
   y  = roundresult(y);
-  document.mrsancalcform.y1.value = y;
+  document.calcform.y1.value = y;
  y  = convert2(x);
   y  = roundresult(y);
-  document.mrsancalcform.y2.value = y;
+  document.calcform.y2.value = y;
 }
 function calcbase(b1,b2) {
- x = document.mrsancalcform.x.value;
-  document.mrsancalcform.y.value = convertbase(x,b1,b2);
+ x = document.calcform.x.value;
+  document.calcform.y.value = convertbase(x,b1,b2);
 }
 function calcbase2() {
- x = document.mrsancalcform.x.value;
+ x = document.calcform.x.value;
  y = convert(x);
-  document.mrsancalcform.y.value = y;
+  document.calcform.y.value = y;
 }
 
 function roundresult(x) {
