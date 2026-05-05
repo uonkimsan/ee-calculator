@@ -1,6 +1,13 @@
 /**
- * Master Calculator JS - Modern Version (ES6+)
+ * @file master-calcform.js
+ * @description Master Electrical Calculation Library for GitHub
+ * @version 2.0.0
+ * @author MR.SAN
  */
+
+/**
+ * Master Calculator JS - Modern Version (ES6+)
+ */
 
 const Calculator = {
     // កំណត់ Focus ទៅកាន់ Input x
