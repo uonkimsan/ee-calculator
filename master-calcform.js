@@ -1,9 +1,6 @@
 /**
- * @Master JavaScript Calculator Framework
-* @description Master Electrical Calculation Library for GitHub
- * Email: kimsan710.c506x@hotmail.com
- *Developer: Mr.SAN | Khmer Wiring Blog
- * @version 3.1.0
+ * Master JavaScript Calculator Framework (V3.1)
+ * បន្ថែមមុខងារ Validation ដើម្បីទប់ស្កាត់ការគណនាពេលបញ្ចូលលេខខុសលក្ខខណ្ឌ
  */
 
 const Calculator = {
@@ -65,4 +62,3 @@ const setfocus = () => Calculator.setFocus();
 window.onload = () => {
     if (typeof OnPhaseChange === "function") OnPhaseChange();
 };
-    
