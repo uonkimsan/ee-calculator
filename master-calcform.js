@@ -1,60 +1,68 @@
 /**
- * @file master-calcform.js
- * @description Master Electrical Calculation Library for GitHub
- * @version 2.0.0
- * @author MR.SAN
+ * @Master JavaScript Calculator Framework
+* @description Master Electrical Calculation Library for GitHub
+ * Email: kimsan710.c506x@hotmail.com
+ *Developer: Mr.SAN | Khmer Wiring Blog
+ * @version 3.1.0
  */
 
-/**
- * Master Calculator JS - Modern Version (ES6+)
- */
-
 const Calculator = {
-    // កំណត់ Focus ទៅកាន់ Input x
     setFocus: () => {
-        const inputX = document.querySelector('input[name="x"]');
-        if (inputX) inputX.focus();
+        const resCard = document.getElementById('result-card');
+        if (resCard) resCard.style.display = 'none';
+
+        setTimeout(() => {
+            const inputX1 = document.getElementById('x1');
+            if (inputX1) inputX1.focus();
+            if (typeof OnPhaseChange === "function") OnPhaseChange();
+        }, 10);
     },
 
-    // មុខងារគណនាទូទៅ
-    calculate: (type = 'calc3') => {
+    roundResult: (val) => {
+        if (isNaN(val) || !isFinite(val)) return "0.00";
+        return parseFloat(val).toFixed(2);
+    },
+
+    calc3: () => {
         const form = document.forms['calcform'];
         if (!form) return;
 
-        let result;
-        const x1 = parseFloat(form.x1?.value) || 0;
-        const x2 = parseFloat(form.x2?.value) || 0;
-        const x3 = parseFloat(form.x3?.value) || 0;
+        const x1 = parseFloat(form.x1.value);
+        const x2 = parseFloat(form.x2.value);
 
-        // ជ្រើសរើសប្រភេទគណនាតាម Argument
-        switch (type) {
-            case 'calc3':
-                result = convert(x1, x2);
-                break;
-            case 'calc4':
-                result = convert(x1, x2, x3);
-                break;
-            default:
-                const x = parseFloat(form.x?.value) || 0;
-                result = convert(x);
+        // ១. ត្រួតពិនិត្យតម្លៃ Current និង Voltage
+        if (isNaN(x1) || isNaN(x2)) {
+            alert("សូមបញ្ចូលលេខឱ្យបានត្រឹមត្រូវ!");
+            return;
         }
 
-        // បង្ហាញលទ្ធផល និងធ្វើការបង្គត់
-        if (form.y) {
-            form.y.value = Calculator.roundResult(result);
+        // ២. ហៅមុខងារ convert និងចាប់យកតម្លៃត្រឡប់មកវិញ
+        // ប្រសិនបើ convert() បញ្ជូនតម្លៃ null មកវិញ មានន័យថាទិន្នន័យបញ្ចូលខុស (ដូចជា PF > 1)
+        let rawResult = 0;
+        if (typeof convert === "function") {
+            rawResult = convert(x1, x2);
+            if (rawResult === null) return; // បញ្ឈប់ការគណនាភ្លាមៗ
+        } else {
+            rawResult = (x1 * x2) / 1000;
         }
-    },
 
-    // មុខងារបង្គត់លេខទំនើប (ជំនួសឱ្យមុខងារ removeAt ស្មុគស្មាញ)
-    roundResult: (val) => {
-        if (isNaN(val)) return "0";
-        const num = parseFloat(val);
-        // បង្គត់យក ១០ ខ្ទង់ និងលុបលេខ ០ ដែលមិនចាំបាច់នៅខាងចុង
-        return Number(num.toPrecision(10)).toString();
+        // ៣. បង្ហាញលទ្ធផល
+        const finalResult = Calculator.roundResult(rawResult);
+        const resCard = document.getElementById('result-card');
+        const resVal = document.getElementById('res-val');
+
+        if (resCard && resVal) {
+            resCard.style.display = 'block';
+            resVal.innerText = finalResult;
+            resCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 };
 
-// បង្កើត Alias ដើម្បីឱ្យត្រូវជាមួយកូដចាស់ (Backward Compatibility)
-const calc3 = () => Calculator.calculate('calc3');
-const calc4 = () => Calculator.calculate('calc4');
+const calc3 = () => Calculator.calc3();
 const setfocus = () => Calculator.setFocus();
+
+window.onload = () => {
+    if (typeof OnPhaseChange === "function") OnPhaseChange();
+};
+    
