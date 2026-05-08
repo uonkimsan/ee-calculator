@@ -61,4 +61,4 @@ const setfocus = () => Calculator.setFocus();
 
 window.onload = () => {
     if (typeof OnPhaseChange === "function") OnPhaseChange();
-};
+};  
