@@ -1,7 +1,7 @@
 /**
- * Master JavaScript Calculator Framework (V3.1)
- * បន្ថែមមុខងារ Validation ដើម្បីទប់ស្កាត់ការគណនាពេលបញ្ចូលលេខខុសលក្ខខណ្ឌ
- */
+ * @master calcform V3.1
+ * @Author: Mr SAN
+**/
 
 const Calculator = {
     setFocus: () => {
